@@ -1,4 +1,8 @@
-NTKernelWalkerLib is a self contained library for resolving kernel offsets from user mode. It wraps dbghelp to fetch RVAs of exported symbols from ntoskrnl.exe and adds a lightweight image mapper that can scan executable sections to find short ROP gadgets such as “pop rcx ; ret” or “jmp rax”. The library exposes two main groups of functions:
+# NTOSKRNL Walker Lib by Juan Sacco <support@exploitpack.com> https://exploitpack.com
+
+NTKernelWalkerLib is a self contained library for resolving kernel offsets from user mode. It wraps dbghelp to fetch RVAs of exported symbols from ntoskrnl.exe and adds a lightweight image mapper that can scan executable sections to find short ROP gadgets such as “pop rcx ; ret” or “jmp rax”. 
+
+The library exposes two main groups of functions:
 
 Symbol resolution via PDB/exports:
 symres::ResolveNtoskrnlSymbolRva(const std::string& name, const std::wstring& symPath=L"") looks up an export in the running kernel by loading the on-disk ntoskrnl with dbghelp and returns its RVA.
@@ -10,3 +14,7 @@ symres::FindGadgetRva(const ImageMapping& img, const std::string& gadgetText, bo
 symres::UnmapImageFile(ImageMapping& img) cleans up the mapping.
 
 A typical flow: map ntoskrnl.exe, call FindGadgetRva for the pop/jmp gadgets you need, call ResolveSymbolRvaFromFile for functions like KiApcInterrupt or memcpy, then unmap. All return RVAs, so add the running ntoskrnl base to get VAs. No network is required if symbols are already cached; otherwise the default symbol path is srv*%SystemRoot%\Symbols*https://msdl.microsoft.com/download/symbols.
+
+
+
+There is also a standalone version of this library here: https://github.com/jsacco/ntoskrnlwalker
